@@ -136,7 +136,7 @@ $(".list-group").on("blur", "input[type='text']", function () {
     .index();
   tasks[status][index].date = date;
   saveTasks();
-  
+
   var taskSpan = $(this)
     .addClass("badge badge-primary badge-pill")
     .text(date);
@@ -150,6 +150,64 @@ $("#remove-tasks").on("click", function () {
     $("#list-" + key).empty();
   }
   saveTasks();
+});
+
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "clone",
+  activate: function (event) {
+    console.log("activate", this);
+  },
+  deactivate: function (event) {
+    console.log("deactivate", this);
+  },
+  over: function (event) {
+    console.log("over", event.target);
+  },
+  out: function (event) {
+    console.log("out", event.target);
+  },
+  update: function () {
+    var temArr = [];
+    $(this).children().each(function () {
+      tempArr.push({
+        text: $(this)
+          .find("p")
+          .text()
+          .trim(),
+        date: $(this)
+          .find("span")
+          .text()
+          .trim()
+      });
+    });
+
+    var arrName = $(this)
+      .attr("id")
+      .replace("list-", "");
+    tasks[arrName] = tempArr;
+    saveTasks();
+  },
+  stop: function(event) {
+    $(this).remove("dropover");
+  }
+});
+
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function (event, ui) {
+    ui.draggable.remove();
+    console.log("drop");
+  },
+  over: function (event, ui) {
+    console, log("over");
+  },
+  out: function (event, ui) {
+    console.log("out");
+  }
 });
 
 // load tasks for the first time
